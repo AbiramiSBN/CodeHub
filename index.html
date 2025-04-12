@@ -1,136 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CodeHub</title>
-  <!-- Marked.js to convert Markdown to HTML -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Markdown Viewer - Dark Mode</title>
   <style>
-    /* Global Styles */
-    * {
-      box-sizing: border-box;
+    /* Global Reset and Dark Background */
+    body, html {
       margin: 0;
       padding: 0;
-    }
-    body {
-      background: #000;
-      color: #eee;
+      height: 100%;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;  /* Deep black background */
+      color: #f0f0f0;
+    }
+    /* Centered Container with a Modern GUI */
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background-color: #1E1E1E;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    /* Headings with Underline Effects */
+    h1, h2, h3, h4, h5, h6 {
+      border-bottom: 2px solid #333;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+    }
+    /* Paragraph and text spacing */
+    p {
       line-height: 1.6;
-      overflow-x: hidden;
+      margin: 15px 0;
     }
-    header {
-      background: #111;
-      padding: 1rem 2rem;
-      text-align: center;
-      border-bottom: 2px solid #1abc9c;
+    /* Link Styling */
+    a {
+      color: #66aaff;
+      text-decoration: none;
     }
-    header h1 {
-      font-size: 2rem;
-      color: #1abc9c;
+    a:hover {
+      text-decoration: underline;
     }
-    main {
-      padding: 40px 20px 80px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    /* Markdown Preview */
-    #md-preview {
-      background: #111;
-      padding: 20px;
-      border: 1px solid #333;
-      border-radius: 5px;
-      animation: fadeIn 0.8s ease-out;
-      margin-bottom: 60px;
-    }
-    /* Styling for rendered markdown */
-    #md-preview h1,
-    #md-preview h2,
-    #md-preview h3,
-    #md-preview h4,
-    #md-preview h5,
-    #md-preview h6 {
-      color: #1abc9c;
-      margin-bottom: 10px;
-    }
-    #md-preview p {
-      margin-bottom: 1rem;
-      text-align: justify;
-    }
-    #md-preview pre {
-      background: #222;
+    /* Code Block Styling */
+    pre {
+      background: #333;
       padding: 15px;
       overflow-x: auto;
-      border-radius: 3px;
-      margin-bottom: 1rem;
-      font-size: 0.9rem;
+      border-radius: 4px;
     }
-    #md-preview code {
-      color: #f39c12;
-    }
-    /* Footer */
-    footer {
-      background: #111;
-      color: #aaa;
-      text-align: center;
-      padding: 1rem 0;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-      border-top: 1px solid #1abc9c;
-    }
-    /* Fade-in Animation */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    code {
+      font-family: Consolas, Monaco, 'Courier New', monospace;
+      background: #2a2a2a;
+      padding: 2px 4px;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>CodeHub</h1>
-  </header>
-  <main>
-    <!-- Markdown Preview Area (raw markdown is not shown) -->
-    <div id="md-preview"></div>
-  </main>
-  <footer>
-    <p>&copy; 2025 CodeHub. All rights reserved.</p>
-  </footer>
-
+  <div class="container" id="preview">
+    Loading...
+  </div>
+  
+  <!-- Include Marked.js from a CDN for Markdown conversion -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
-    // Select the preview container
-    const mdPreview = document.getElementById('md-preview');
-
-    // Function to fetch and render Markdown from info.md
-    function loadMarkdown() {
-      fetch('info.md')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch info.md');
-          }
-          return response.text();
-        })
-        .then(markdown => {
-          // Convert Markdown to HTML using marked
-          mdPreview.innerHTML = marked.parse(markdown);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          mdPreview.innerHTML = "<h2>Error Loading Content</h2><p>Unable to load the markdown file.</p>";
-        });
-    }
-
-    // Load Markdown on page load
-    document.addEventListener('DOMContentLoaded', loadMarkdown);
+    // Configure Marked options for heading IDs and disable mangle
+    marked.setOptions({
+      headerIds: true,
+      mangle: false
+    });
+    
+    // Fetch the markdown file "info.md", convert its content to HTML, and display it
+    fetch('info.md')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error fetching markdown file: ' + response.statusText);
+        }
+        return response.text();
+      })
+      .then(mdText => {
+        // Use the new API: call marked.parse() to convert Markdown into HTML
+        const html = marked.parse(mdText);
+        document.getElementById('preview').innerHTML = html;
+      })
+      .catch(error => {
+        document.getElementById('preview').innerHTML = '<p>Error loading Markdown content.</p>';
+        console.error(error);
+      });
   </script>
 </body>
 </html>
-
